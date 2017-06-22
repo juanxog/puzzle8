@@ -95,8 +95,9 @@ def main(universe):
     pos_zero = -1
     visited = []
     frontier = []
+    nodes = []
     frontier.append(universe)
-
+    nodes.append(node(universe,[],""))
 
     while len(frontier) <> 0:
 
@@ -124,12 +125,7 @@ def main(universe):
             action_moves(aux_universe,pos_zero,x)
             if(aux_universe not in visited and aux_universe not in frontier ):
                 frontier.append(aux_universe)
-
-            #print "*************************************************************"
-            #print frontier
-            #print "............................................................."
-            #print visited
-            #print "*************************************************************"
+                nodes.append(node(aux_universe,parent,x))
 
 
 main([1,2,5,3,4,0,6,7,8])
