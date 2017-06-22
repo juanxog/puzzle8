@@ -1,4 +1,14 @@
 import math
+import copy
+
+class node:
+
+    def __init__(self,state,parent,action):
+        self.state = state
+        self.parent = parent
+        self.action = action
+
+
 
 def move_up(universe, pos, action):
 
@@ -12,7 +22,7 @@ def move_up(universe, pos, action):
 
 def move_down(universe, pos, action):
 
-    if pos + 3 > len(universe):
+    if pos + 3 >= len(universe):
         return False
     else:
         if action:
@@ -41,14 +51,19 @@ def move_right(universe, pos, action):
     return True
 
 def find_moves(universe,pos):
+
+    posibilities = []
+
     if move_up(universe,pos,False):
-        print "UP"
+        posibilities.append("UP")
     if move_down(universe,pos,False):
-        print "DOWN"
+        posibilities.append("DOWN")
     if move_left(universe, pos,False):
-        print "LEFT"
+        posibilities.append("LEFT")
     if move_right(universe, pos,False):
-        print "RIGHT"
+        posibilities.append("RIGHT")
+
+    return posibilities
 
 def action_moves(universe,pos,action):
     if action == 'UP':
@@ -61,11 +76,60 @@ def action_moves(universe,pos,action):
         move_right(universe, pos, True)
 
 
-def main():
-        universe = [1, 2, 5, 3, 4, 0, 6, 7, 8]
-        find_moves(universe,5)
+def isgoal(universe):
+
+    goal = False
+
+    for x in universe:
+        if x == universe[x]:
+            goal = True
+        else:
+            return False
+
+    return goal
 
 
+def main(universe):
+
+    #posibles_moves = find_moves(universe,5)
+    pos_zero = -1
+    visited = []
+    frontier = []
+    frontier.append(universe)
 
 
-main()
+    while len(frontier) <> 0:
+
+        state = frontier.pop(-1)
+        parent = copy.copy(state)
+        visited.append(copy.copy(state))
+        posibles_moves = find_moves(state, 5)
+
+        for i in state:
+            if state[i] == 0:
+                pos_zero = i
+
+        if isgoal(state):
+            print("---------------------------------------------")
+            print("metaaaaaaaaaaa")
+            print(state)
+            print("---------------------------------------------")
+            print (frontier)
+            print("---------------------------------------------")
+            print (visited)
+
+
+        for x in posibles_moves:
+            aux_universe = copy.copy(state)
+            action_moves(aux_universe,pos_zero,x)
+            if(aux_universe not in visited and aux_universe not in frontier ):
+                frontier.append(aux_universe)
+
+            #print "*************************************************************"
+            #print frontier
+            #print "............................................................."
+            #print visited
+            #print "*************************************************************"
+
+
+main([1,2,5,3,4,0,6,7,8])
