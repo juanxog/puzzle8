@@ -1,4 +1,3 @@
-import math
 import copy
 
 class node:
@@ -7,8 +6,6 @@ class node:
         self.state = state
         self.parent = parent
         self.action = action
-
-
 
 def move_up(universe, pos, action):
 
@@ -88,44 +85,63 @@ def isgoal(universe):
 
     return goal
 
+def find_path(nodes,node,path):
+    for i in nodes:
+        if i.state == node:
+            if i.action <> "":
+                path.append(i.action)
+            find_path(nodes,i.parent,path)
+
+
+def reverse(actions):
+    new_action = []
+    for i in  reversed(actions):
+        new_action.append(i)
+    return  new_action
+
 
 def main(universe):
 
-    #posibles_moves = find_moves(universe,5)
     pos_zero = -1
     visited = []
     frontier = []
     nodes = []
     frontier.append(universe)
     nodes.append(node(universe,[],""))
+    foundgoal = False
+    nodes_expanded = 0
 
-    while len(frontier) <> 0:
+    while len(frontier) <> 0 and not foundgoal:
 
-        state = frontier.pop(-1)
+        state = frontier.pop(0)
         parent = copy.copy(state)
         visited.append(copy.copy(state))
-        posibles_moves = find_moves(state, 5)
+
+        if isgoal(state):
+            foundgoal = True
 
         for i in state:
             if state[i] == 0:
                 pos_zero = i
 
-        if isgoal(state):
-            print("---------------------------------------------")
-            print("metaaaaaaaaaaa")
-            print(state)
-            print("---------------------------------------------")
-            print (frontier)
-            print("---------------------------------------------")
-            print (visited)
+        if not foundgoal:
+            nodes_expanded = nodes_expanded + 1
+            posibles_moves = find_moves(state, pos_zero)
 
+            for x in posibles_moves:
+                aux_universe = copy.copy(state)
+                action_moves(aux_universe,pos_zero,x)
 
-        for x in posibles_moves:
-            aux_universe = copy.copy(state)
-            action_moves(aux_universe,pos_zero,x)
-            if(aux_universe not in visited and aux_universe not in frontier ):
-                frontier.append(aux_universe)
-                nodes.append(node(aux_universe,parent,x))
+                if(aux_universe not in visited and aux_universe not in frontier):
+                    frontier.append(aux_universe)
+                    nodes.append(node(aux_universe, parent, x))
+
+    actions = []
+    find_path(nodes,[0,1,2,3,4,5,6,7,8],actions)
+
+    print "path_to_goal: ", reverse(actions)
+    print "cost_of_path: "  , len(actions)
+    print "nodes_expanded: " , nodes_expanded
 
 
 main([1,2,5,3,4,0,6,7,8])
